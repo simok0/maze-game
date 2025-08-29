@@ -22,7 +22,7 @@ function showResult(){
   ];
   for(const [k,v] of rows){ const tr=document.createElement('tr'); tr.innerHTML=`<td>${k}</td><td style="text-align:right">${v}</td>`; body.appendChild(tr); }
   document.getElementById('res-total').textContent = s.total;
-  document.getElementById('res-title').textContent = '클리어! 수고했다';
+  document.getElementById('res-title').textContent = '다시는 날 잊지 마';
   document.getElementById('result').style.display = 'grid';
 }
 

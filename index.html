@@ -3,29 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
-  <title>미로 탈출 (FoW + 점수)</title>
+  <title>미궁 속의 티타임</title>
   <link rel="icon" href="./assets/favicon.ico" />
   <link rel="stylesheet" href="./src/styles.css" />
 </head>
 <body>
   <div id="wrap">
-    <header>
-      <h1>미로 탈출 · FoW + 점수</h1>
-      <div class="row">
-        <label>난이도
-          <select id="difficulty">
-            <option value="easy">초급</option>
-            <option value="normal" selected>중급</option>
-            <option value="hard">상급</option>
-          </select>
-        </label>
-        <button id="btn-new" class="primary">새 게임</button>
-      </div>
-      <div style="margin-left:auto" class="row">
-        <span class="pill"><span class="dot"></span> <b>조작</b>: 키보드 <span class="kbd">WASD</span>/<span class="kbd">←↑↓→</span> 또는 화면 패드/스와이프</span>
-      </div>
-    </header>
-
     <main id="game">
       <canvas id="cv" width="960" height="960"></canvas>
       <div class="hud">
@@ -35,11 +18,6 @@
           <div class="pill">최고점: <b id="hud-best">0</b></div>
           <div class="pill" id="hud-effects" style="display:none"></div>
         </div>
-      </div>
-      <div id="pad" aria-label="direction pad">
-        <div></div><button data-dir="up">▲</button><div></div>
-        <button data-dir="left">◀</button><div></div><button data-dir="right">▶</button>
-        <div></div><button data-dir="down">▼</button><div></div>
       </div>
       <section id="result">
         <div class="card">
@@ -57,6 +35,32 @@
         </div>
       </section>
     </main>
+
+    <div id="bottom-controls">
+      <div id="controls-left">
+        <div id="pad" aria-label="direction pad">
+          <div></div><button data-dir="up">▲</button><div></div>
+          <button data-dir="left">◀</button><div></div><button data-dir="right">▶</button>
+          <div></div><button data-dir="down">▼</button><div></div>
+        </div>
+      </div>
+      <div id="controls-right">
+        <h1>미궁 속의 티타임</h1>
+        <div class="control-row">
+          <label>난이도
+            <select id="difficulty">
+              <option value="easy">초급</option>
+              <option value="normal" selected>중급</option>
+              <option value="hard">상급</option>
+            </select>
+          </label>
+          <button id="btn-new" class="primary">새 게임</button>
+        </div>
+        <div class="control-instruction">
+          <span class="pill"><span class="dot"></span> <b>조작</b>: 키보드 <span class="kbd">WASD</span>/<span class="kbd">←↑↓→</span> 또는 화면 패드/스와이프</span>
+        </div>
+      </div>
+    </div>
 
     <footer>
       모바일 대응: 캔버스는 화면에 맞춰 자동 크기 조절, 타일 크기도 해상도에 맞춰 동적 계산. 안개(FoW) 적용, 점수/최고점은 로컬 저장(서버/파이어베이스 없음).

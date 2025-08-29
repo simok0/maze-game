@@ -3,9 +3,9 @@ import { genMaze, shortestSteps, placeCoins, placeItems } from './maze.js';
 import { drawTeacup } from './teacup.js';
 
 export const DIFF = {
-  easy:   { w: 21, h: 21, fog: 4, coins: 8, items: 3, timeLimit: 120, base: 300, B_time: 400, B_path: 400 },
-  normal: { w: 29, h: 29, fog: 4, coins: 12, items: 4, timeLimit: 120, base: 700, B_time: 700, B_path: 800 },
-  hard:   { w: 37, h: 37, fog: 3, coins: 16, items: 5, timeLimit: 110, base: 1500, B_time: 1200, B_path: 1400 },
+  easy:   { w: 21, h: 21, fog: 2.5, coins: 8, items: 3, timeLimit: 120, base: 300, B_time: 400, B_path: 400 },
+  normal: { w: 29, h: 29, fog: 2.5, coins: 12, items: 4, timeLimit: 120, base: 700, B_time: 700, B_path: 800 },
+  hard:   { w: 37, h: 37, fog: 2, coins: 16, items: 5, timeLimit: 110, base: 1500, B_time: 1200, B_path: 1400 },
 };
 
 export const state = {
@@ -144,7 +144,7 @@ export function stepOnce(dx,dy, cv, ctx){
   if(state.items.has(k)){
     const kind = (Math.random()<0.5)?'booster':'minimap';
     state.items.delete(k);
-    if(kind==='booster') state.effects.booster = 5.0; else state.effects.minimap = Math.max(state.effects.minimap, 2.0);
+    if(kind==='booster') state.effects.booster = 5.0; else state.effects.minimap = Math.max(state.effects.minimap, 1.0);
   }
   // exit
   if(nx===state.exit[0] && ny===state.exit[1]){ state.running=false; state.over=true; }
