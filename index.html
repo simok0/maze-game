@@ -5,68 +5,202 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <title>미궁 속의 티타임</title>
   <link rel="icon" href="./assets/favicon.ico" />
+  <link rel="preload" href="https://cdn.jsdelivr.net/korean-webfonts/1/corps/hani/Hankc/Hankc.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="./src/styles.css" />
+  <script type="module" src="./src/main.js" defer></script>
 </head>
 <body>
   <div id="wrap">
-    <main id="game">
-      <canvas id="cv" width="960" height="960"></canvas>
+    <!-- 웰컴 배너 화면 -->
+    <section id="welcome-banner">
+      <div class="banner-content">
+        <h1>미궁 속의 티타임</h1>
+        <div class="story-text">
+          <p>깼어요? 여긴 하이드로 호텔.<br>변두리긴 해도 쉬기엔 그만이죠.</p>
+        </div>
+        <div class="banner-controls">
+          <div class="difficulty-selection">
+            <label>난이도
+              <select id="banner-difficulty">
+                <option value="easy">초급</option>
+                <option value="normal" selected>중급</option>
+                <option value="hard">상급</option>
+              </select>
+            </label>
+          </div>
+          <button id="btn-start" class="primary">게임 시작</button>
+          <div class="control-instruction">
+            <span class="pill"><span class="dot"></span> 키보드 <span class="kbd">WASD</span> 또는 패드</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 게임 화면 (처음엔 숨겨짐) -->
+    <div id="game-container" style="display: none;">
       <div class="hud">
         <div class="pill" id="hud-left">시간: <b id="hud-time">0.0</b>s · 스텝: <b id="hud-steps">0</b> · 코인: <b id="hud-coins">0</b></div>
         <div class="right">
           <div class="pill">예상점수: <b id="hud-score">0</b></div>
           <div class="pill">최고점: <b id="hud-best">0</b></div>
+          <button id="btn-mute" class="pill mute-button" title="음소거 토글">🔊</button>
           <div class="pill" id="hud-effects" style="display:none"></div>
         </div>
       </div>
-      <section id="result">
-        <div class="card">
-          <h2 id="res-title">결과</h2>
-          <table>
-            <tbody id="res-body"></tbody>
-            <tfoot>
-              <tr><td class="total">총점</td><td class="total" id="res-total"></td></tr>
-            </tfoot>
-          </table>
-          <div class="row">
-            <button id="btn-retry">다시 하기</button>
-            <button id="btn-continue">난이도 유지 · 새 미로</button>
+      
+      <main id="game">
+        <canvas id="cv" width="960" height="960"></canvas>
+        <section id="result">
+          <div class="card">
+            <h2 id="res-title">결과</h2>
+            <table>
+              <tbody id="res-body"></tbody>
+              <tfoot>
+                <tr><td class="total">총점</td><td class="total" id="res-total"></td></tr>
+              </tfoot>
+            </table>
+            <div class="row">
+              <button id="btn-retry">다시 하기</button>
+              <button id="btn-continue">난이도 유지 · 새 미로</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <div id="bottom-controls">
+        <div id="controls-left">
+          <div id="pad" aria-label="direction pad">
+            <div></div><button data-dir="up">▲</button><div></div>
+            <button data-dir="left">◀</button><div></div><button data-dir="right">▶</button>
+            <div></div><button data-dir="down">▼</button><div></div>
           </div>
         </div>
-      </section>
-    </main>
-
-    <div id="bottom-controls">
-      <div id="controls-left">
-        <div id="pad" aria-label="direction pad">
-          <div></div><button data-dir="up">▲</button><div></div>
-          <button data-dir="left">◀</button><div></div><button data-dir="right">▶</button>
-          <div></div><button data-dir="down">▼</button><div></div>
-        </div>
-      </div>
-      <div id="controls-right">
-        <h1>미궁 속의 티타임</h1>
-        <div class="control-row">
-          <label>난이도
-            <select id="difficulty">
-              <option value="easy">초급</option>
-              <option value="normal" selected>중급</option>
-              <option value="hard">상급</option>
-            </select>
-          </label>
-          <button id="btn-new" class="primary">새 게임</button>
-        </div>
-        <div class="control-instruction">
-          <span class="pill"><span class="dot"></span> <b>조작</b>: 키보드 <span class="kbd">WASD</span>/<span class="kbd">←↑↓→</span> 또는 화면 패드/스와이프</span>
+        <div id="controls-right">
+          <div class="control-row">
+            <button id="btn-home" class="secondary">처음으로</button>
+            <button id="btn-new" class="primary">새 게임</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <footer>
-      모바일 대응: 캔버스는 화면에 맞춰 자동 크기 조절, 타일 크기도 해상도에 맞춰 동적 계산. 안개(FoW) 적용, 점수/최고점은 로컬 저장(서버/파이어베이스 없음).
-    </footer>
   </div>
 
-  <script type="module" src="./src/main.js"></script>
+  <!-- BGM 오디오 요소 -->
+  <audio id="bgm" loop>
+    <source src="./assets/bgm.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- 간단한 인라인 스크립트로 게임 시작 기능 추가 -->
+  <script>
+    // BGM 관련 변수
+    let isMuted = false;
+    const bgm = document.getElementById('bgm');
+    
+    // 현재 난이도 저장
+    window.currentDifficulty = 'normal';
+    
+    function startGame() {
+      console.log('게임 시작 함수 호출됨');
+      
+      // 배너 숨기고 게임 화면 보이기
+      document.getElementById('welcome-banner').style.display = 'none';
+      document.getElementById('game-container').style.display = 'block';
+      
+      // BGM 시작
+      playBGM();
+      
+      // 선택한 난이도로 게임 시작
+      const selectedDifficulty = document.getElementById('banner-difficulty').value;
+      window.currentDifficulty = selectedDifficulty; // 현재 난이도 저장
+      
+      console.log('선택된 난이도:', selectedDifficulty);
+      
+      // 모듈에서 게임 시작 함수 호출
+      if (window.moduleStartGame) {
+        window.moduleStartGame(selectedDifficulty);
+      }
+    }
+    
+    function playBGM() {
+      if (!isMuted && bgm) {
+        bgm.volume = 0.3; // 볼륨 30%로 설정
+        bgm.play().catch(e => console.log('BGM 재생 실패:', e));
+      }
+    }
+    
+    function stopBGM() {
+      if (bgm) {
+        bgm.pause();
+        bgm.currentTime = 0;
+      }
+    }
+    
+    function toggleMute() {
+      isMuted = !isMuted;
+      const muteButton = document.getElementById('btn-mute');
+      
+      if (isMuted) {
+        bgm.pause();
+        muteButton.textContent = '🔇';
+        muteButton.title = '음소거 해제';
+      } else {
+        playBGM();
+        muteButton.textContent = '🔊';
+        muteButton.title = '음소거';
+      }
+    }
+    
+    function goHome() {
+      console.log('처음으로 버튼 클릭됨');
+      
+      // 게임 화면 숨기고 배너 보이기
+      document.getElementById('game-container').style.display = 'none';
+      document.getElementById('welcome-banner').style.display = 'flex';
+      
+      // BGM 정지
+      stopBGM();
+      
+      // 결과 화면도 숨기기
+      const resultScreen = document.getElementById('result');
+      if (resultScreen) {
+        resultScreen.style.display = 'none';
+      }
+    }
+    
+    // 페이지 로드 후 버튼 이벤트 연결
+    document.addEventListener('DOMContentLoaded', function() {
+      const startButton = document.getElementById('btn-start');
+      if (startButton) {
+        startButton.onclick = startGame;
+        console.log('게임 시작 버튼 연결됨');
+      } else {
+        console.error('게임 시작 버튼을 찾을 수 없음');
+      }
+      
+      const homeButton = document.getElementById('btn-home');
+      if (homeButton) {
+        homeButton.onclick = goHome;
+        console.log('처음으로 버튼 연결됨');
+      }
+      
+      const muteButton = document.getElementById('btn-mute');
+      if (muteButton) {
+        muteButton.onclick = toggleMute;
+        console.log('음소거 버튼 연결됨');
+      }
+      
+      const newButton = document.getElementById('btn-new');
+      if (newButton) {
+        newButton.onclick = function() {
+          console.log('새 게임 버튼 클릭됨 (HTML)');
+          if (window.moduleStartGame && window.currentDifficulty) {
+            window.moduleStartGame(window.currentDifficulty);
+          }
+        };
+        console.log('새 게임 버튼 연결됨');
+      }
+    });
+  </script>
 </body>
 </html>

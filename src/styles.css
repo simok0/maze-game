@@ -1,3 +1,12 @@
+@font-face {
+    font-family: 'Hangyore';
+    src: url('https://cdn.jsdelivr.net/korean-webfonts/1/corps/hani/Hankc/Hankc.woff2') format('woff2'),
+         url('https://cdn.jsdelivr.net/korean-webfonts/1/corps/hani/Hankc/Hankc.woff') format('woff');
+    font-weight: 400;
+    font-display: swap;
+    unicode-range: U+AC00-D7AF, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
+}
+
 :root {
   --bg: #0b0f14;
   --panel: #121821cc;
@@ -7,31 +16,236 @@
   --text: #c9d1d9;
 }
 * { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, Noto Sans KR, sans-serif; }
-#wrap { display: grid; grid-template-rows: 1fr auto auto; height: 100%; }
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  background: var(--bg); 
+  color: var(--text); 
+  font-family: 'Hangyore', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', sans-serif; 
+  overflow: hidden; /* 모든 스크롤 방지 */
+}
+body { 
+  max-width: 100vw; /* 화면 너비 초과 방지 */
+  position: fixed; /* 모바일에서 스크롤 완전 방지 */
+  width: 100%;
+  height: 100vh;
+}
+#wrap { display: grid; grid-template-rows: 1fr auto; height: 100%; }
+
+/* 웰컴 배너 스타일 */
+#welcome-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0b0f14 0%, #1a1e29 50%, #0f1419 100%);
+  padding: 2rem 1rem;
+}
+
+.banner-content {
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.banner-content h1 {
+  font-size: 3rem;
+  margin: 0 0 1.5rem 0;
+  font-weight: 700;
+  line-height: 1.4;
+  background: linear-gradient(135deg, #79c0ff 0%, #7ee787 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.story-text {
+  margin: 1.5rem 0;
+}
+
+.story-text p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #c9d1d9;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.banner-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.difficulty-selection {
+  margin-bottom: .5rem;
+}
+
+.difficulty-selection label {
+  font-size: 1rem;
+  color: #c9d1d9;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  align-items: center;
+}
+
+#banner-difficulty {
+  background: #171e27;
+  color: var(--text);
+  border: 1px solid #243040;
+  border-radius: .5rem;
+  padding: .5rem .8rem;
+  font-size: 1rem;
+  min-width: 120px;
+}
+
+#btn-start {
+  background: linear-gradient(135deg, #2b80ff 0%, #79c0ff 100%);
+  color: white;
+  border: none;
+  border-radius: .8rem;
+  padding: .8rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(43, 128, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+#btn-start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(43, 128, 255, 0.4);
+}
+
+#btn-start:active {
+  transform: translateY(0);
+}
+
+/* 게임 컨테이너 */
+#game-container {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  height: 100vh;
+}
 
 #game { position: relative; display:grid; place-items:center; padding: .5rem; }
 
-#bottom-controls { display: grid; grid-template-columns: auto 1fr; gap: 1rem; padding: .6rem .9rem; background: linear-gradient(180deg, #131a23, #0f141b); border-top: 1px solid #1f2a36; }
+#bottom-controls { 
+  display: grid; 
+  grid-template-columns: auto 1fr; 
+  gap: 1rem; 
+  padding: .5rem .9rem; 
+  background: linear-gradient(180deg, #131a23, #0f141b); 
+  border-top: 1px solid #1f2a36;
+  /* 모바일 하단 네비게이션 바를 위한 여백 */
+  padding-bottom: max(.5rem, env(safe-area-inset-bottom, 0));
+}
 
-#controls-left { display: flex; align-items: center; justify-content: center; }
+#controls-left { 
+  display: flex; 
+  align-items: center; 
+  justify-content: flex-start; 
+}
 
-#controls-right { display: flex; flex-direction: column; gap: .5rem; justify-content: center; }
-#controls-right h1 { font-size: 1rem; margin: 0; font-weight: 700; letter-spacing:.2px; color:#e6edf3; }
-.control-row { display:flex; align-items:center; gap:.5rem; flex-wrap: wrap; }
-.control-instruction { font-size: .85rem; }
-#controls-right select, #controls-right button { background: #171e27; color: var(--text); border: 1px solid #243040; border-radius: .5rem; padding: .35rem .6rem; font-size:.9rem; }
-#controls-right button.primary { border-color:#2b80ff66; box-shadow: 0 0 0 1px #2b80ff22 inset; }
-canvas { width: 100%; height: 100%; max-width: min(96vmin, 1024px); max-height: min(96vmin, 1024px); background: #0a0e13; border-radius: 1rem; box-shadow: 0 10px 40px #0008, 0 0 0 1px #1b2531 inset; touch-action: none; }
+#controls-right { 
+  display: flex; 
+  flex-direction: column; 
+  gap: .4rem; 
+  justify-content: center; 
+  text-align: right !important;
+  align-items: flex-end !important;
+}
+
+#controls-right h1 { 
+  font-size: .9rem; 
+  margin: 0; 
+  font-weight: 700; 
+  letter-spacing:.1px; 
+  color:#e6edf3; 
+}
+
+.control-row { 
+  display: flex; 
+  align-items: center; 
+  gap: .5rem; 
+  flex-wrap: wrap; 
+  justify-content: flex-end !important;
+}
+
+.control-instruction { 
+  font-size: .65rem; 
+}
+
+#controls-right select, #controls-right button { 
+  background: #171e27; 
+  color: var(--text); 
+  border: 1px solid #243040; 
+  border-radius: .4rem; 
+  padding: .25rem .4rem; 
+  font-size: .8rem; 
+}
+
+#controls-right button.primary { 
+  border-color:#2b80ff66; 
+  box-shadow: 0 0 0 1px #2b80ff22 inset; 
+}
+
+#controls-right button.secondary {
+  background: #2a2f3a;
+  border-color: #404552;
+  color: #9db3c8;
+}
+canvas { 
+  width: 100%; 
+  height: 100%; 
+  max-width: min(96vmin, 1024px); 
+  max-height: min(96vmin, 1024px); 
+  background: #0a0e13; 
+  border-radius: 1rem; 
+  box-shadow: 0 10px 40px #0008, 0 0 0 1px #1b2531 inset; 
+  touch-action: none; 
+}
 
 /* HUD */
-.hud { position: absolute; inset: .8rem .8rem auto .8rem; display:flex; justify-content:space-between; align-items:center; gap:.5rem; pointer-events: none; }
-.pill { background: var(--panel); backdrop-filter: blur(6px); border:1px solid #273343; padding: .4rem .6rem; border-radius: 999px; font-size: .9rem; display:flex; align-items:center; gap:.5rem; }
+.hud { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  gap: .5rem; 
+  padding: .5rem .9rem .3rem; 
+  pointer-events: none; 
+}
+.hud .mute-button {
+  pointer-events: auto;
+}
+.pill { background: var(--panel); backdrop-filter: blur(6px); border:1px solid #273343; padding: .2rem .4rem; border-radius: 999px; font-size: .65rem; display:flex; align-items:center; gap:.3rem; }
 .pill .dot { width:.6rem; height:.6rem; border-radius:50%; background: var(--accent); }
 .hud .right { display:flex; gap:.5rem; }
 
-/* On-screen controls (mobile) */
-#pad { display:grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); gap:6px; opacity:.95; }
+/* 음소거 버튼 스타일 */
+.mute-button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--panel);
+  border: 1px solid #273343;
+  color: var(--text);
+  font-size: .8rem;
+  padding: .2rem .5rem;
+}
+
+.mute-button:hover {
+  background: #1a2332;
+  border-color: #3a4755;
+  transform: translateY(-1px);
+}
+
+.mute-button:active {
+  transform: translateY(0);
+}
+
+/* On-screen controls (mobile) - button styles only */
 #pad button { width:56px; height:56px; border-radius:12px; border:1px solid #2a3647; background:#121a23cc; color:#bcd; font-weight:700; backdrop-filter: blur(4px); pointer-events:auto; }
 #pad button:active { transform: translateY(1px); }
 
@@ -49,96 +263,300 @@ canvas { width: 100%; height: 100%; max-width: min(96vmin, 1024px); max-height: 
 footer { padding:.6rem .9rem; color:#8ca2b8; font-size:.85rem; border-top:1px solid #1f2a36; }
 .kbd { border:1px solid #2b3a4f; background:#101722; padding:.05rem .35rem; border-radius:.35rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.9em; }
 
-/* Desktop styles - restore original header layout for larger screens */
+/* Mobile First - Default styles for mobile */
+/* Show direction pad on mobile by default */
+#pad { 
+  display: grid; 
+  grid-template-columns: repeat(3, 56px); 
+  grid-template-rows: repeat(3, 56px); 
+  gap: 6px; 
+  opacity: .95; 
+}
+
+/* Desktop styles - hide direction pad and adjust layout */
 @media (min-width: 768px) {
-  #wrap { display: grid; grid-template-rows: auto 1fr auto; height: 100%; }
+  /* Hide direction pad on desktop */
+  #pad {
+    display: none;
+  }
   
-  #bottom-controls { 
+  /* 데스크톱 게임 컨테이너 최적화 */
+  #game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 0;
+  }
+  
+  /* 데스크톱 게임 영역 중앙 정렬 및 크기 최적화 */
+  #game {
     display: flex;
     align-items: center;
-    gap: .75rem;
-    padding: .6rem .9rem;
-    background: linear-gradient(180deg, #131a23, #0f141b);
+    justify-content: center;
+    padding: 1rem;
+    min-height: 0; /* 그리드 오버플로우 방지 */
+  }
+  
+  /* 캔버스 크기 최적화 */
+  canvas {
+    width: min(70vw, 600px) !important;
+    height: min(70vw, 600px) !important;
+    max-width: 600px !important;
+    max-height: 600px !important;
+  }
+  
+  /* HUD 최적화 */
+  .hud {
+    padding: 1rem 2rem .8rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .pill {
+    padding: .4rem .8rem;
+    font-size: .8rem;
+    gap: .4rem;
+  }
+  
+  .hud .right {
+    gap: .8rem;
+  }
+  
+  /* 하단 컨트롤 최적화 */
+  #bottom-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 2rem;
     border-top: 1px solid #1f2a36;
-    position: sticky;
-    bottom: 0;
-    z-index: 4;
+    max-width: 1200px;
+    margin: 0 auto;
   }
   
   #controls-left {
-    order: 2;
-    margin-left: auto;
+    order: 1;
+    margin-left: 0;
   }
   
   #controls-right {
     flex-direction: row;
     align-items: center;
-    gap: .75rem;
-    order: 1;
-  }
-  
-  .control-row {
-    margin: 0;
+    gap: 1rem;
+    order: 2;
+    text-align: left;
+    justify-content: flex-end;
   }
   
   .control-instruction {
-    font-size: .9rem;
-  }
-  
-  #controls-right h1 {
-    margin-right: 1rem;
-  }
-  
-  /* Hide direction pad on desktop */
-  #pad {
-    display: none;
-  }
-}
-
-/* Tablet and mobile adjustments */
-@media (max-width: 767px) {
-  #bottom-controls {
-    grid-template-columns: auto 1fr;
-    gap: 1rem;
-    align-items: stretch;
-  }
-  
-  #controls-left {
+    font-size: 1rem;
+    color: #9db3c8;
     display: flex;
     align-items: center;
-    justify-content: center;
-  }
-  
-  #controls-right {
-    display: flex;
-    flex-direction: column;
     gap: .5rem;
-    justify-content: center;
-    min-height: 168px; /* Match pad height */
-  }
-}
-
-/* Very small mobile screens */
-@media (max-width: 480px) {
-  #bottom-controls {
-    grid-template-columns: 1fr;
-    gap: .5rem;
-    text-align: center;
-  }
-  
-  #controls-left {
-    justify-content: center;
-    order: 2;
-  }
-  
-  #controls-right {
-    order: 1;
-    align-items: center;
-    text-align: center;
-    min-height: auto;
   }
   
   .control-row {
-    justify-content: center;
+    gap: 1rem;
+  }
+  
+  #controls-right button {
+    padding: .5rem 1rem;
+    font-size: .9rem;
+    border-radius: .5rem;
+  }
+  
+  /* 데스크톱에서 배너 스타일 최적화 */
+  .banner-content {
+    max-width: 500px;
+  }
+  
+  .banner-content h1 {
+    font-size: 3.5rem !important;
+  }
+  
+  .story-text p {
+    font-size: 1.2rem !important;
+  }
+  
+  #btn-start {
+    padding: 1rem 2.5rem !important;
+    font-size: 1.2rem !important;
+  }
+  
+  #banner-difficulty {
+    min-width: 140px !important;
+    font-size: 1.1rem !important;
+    padding: .6rem 1rem !important;
+  }
+  
+  .difficulty-selection label {
+    font-size: 1.1rem !important;
+  }
+  
+  /* 결과 패널 최적화 */
+  #result .card {
+    width: min(90vw, 500px);
+    padding: 1.5rem;
+  }
+  
+  #result h2 {
+    font-size: 1.4rem;
+    margin: 0 0 1rem;
+  }
+  
+  #result table {
+    font-size: 1rem;
+  }
+  
+  #result td {
+    padding: .5rem .3rem;
+  }
+  
+  #result .row {
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+  
+  #result .row button {
+    padding: .7rem 1.2rem;
+    font-size: .95rem;
+  }
+  
+  /* 푸터 최적화 */
+  footer {
+    padding: 1rem 2rem;
+    font-size: .9rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+}
+
+/* Large desktop screens */
+@media (min-width: 1200px) {
+  #game-container {
+    max-width: 1400px;
+  }
+  
+  canvas {
+    width: min(60vw, 700px) !important;
+    height: min(60vw, 700px) !important;
+    max-width: 700px !important;
+    max-height: 700px !important;
+  }
+  
+  .hud {
+    padding: 1.2rem 3rem 1rem;
+    max-width: 1400px;
+  }
+  
+  #bottom-controls {
+    padding: 1.2rem 3rem;
+    max-width: 1400px;
+  }
+  
+  footer {
+    padding: 1.2rem 3rem;
+    max-width: 1400px;
+  }
+}
+
+/* Very small mobile screens - keep horizontal layout but adjust spacing */
+@media (max-width: 480px) {
+  #bottom-controls {
+    grid-template-columns: auto 1fr;
+    gap: .5rem;
+    /* 작은 화면에서 더 많은 여백 */
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
+  }
+  
+  #controls-left {
+    justify-content: flex-start;
+  }
+  
+  #controls-right {
+    align-items: flex-end !important;
+    text-align: right !important;
+  }
+  
+  .control-row {
+    justify-content: flex-end !important;
+  }
+}
+
+/* 모바일 전용 추가 설정 */
+@media (max-width: 767px) {
+  /* 모바일에서 화면 고정 */
+  body {
+    height: 100vh;
+    height: -webkit-fill-available; /* iOS Safari 지원 */
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+  
+  #wrap {
+    height: 100vh;
+    height: -webkit-fill-available; /* iOS Safari 지원 */
+  }
+  
+  /* 게임 컨테이너 높이 조정 */
+  #game-container {
+    height: 100vh;
+    height: -webkit-fill-available; /* iOS Safari 지원 */
+    grid-template-rows: auto 1fr auto;
+  }
+  
+  /* 웰컴 배너 높이 조정 */
+  #welcome-banner {
+    height: 100vh;
+    height: -webkit-fill-available; /* iOS Safari 지원 */
+    min-height: auto;
+  }
+  
+  #bottom-controls {
+    /* 모바일에서 하단 여백 확보 */
+    padding-bottom: max(1.2rem, env(safe-area-inset-bottom, 1.2rem));
+  }
+  
+  #controls-right {
+    text-align: right;
+  }
+  
+  .control-row {
+    justify-content: flex-end;
+  }
+  
+  /* 모바일에서 HUD 최적화 */
+  .pill {
+    font-size: .55rem;
+    padding: .15rem .3rem;
+    gap: .2rem;
+  }
+  
+  .hud {
+    padding: .4rem .7rem .2rem;
+  }
+  
+  /* 모바일에서 배너 최적화 */
+  .banner-content h1 {
+    font-size: 2.2rem;
+    line-height: 1.4;
+  }
+  
+  .story-text p {
+    font-size: 1rem;
+  }
+  
+  #welcome-banner {
+    padding: 1rem;
+  }
+  
+  #btn-start {
+    padding: .7rem 1.5rem;
+    font-size: 1rem;
   }
 }

@@ -1,7 +1,25 @@
 import { fitCanvas, draw, newGame, tryMove, state, computeScore } from './game.js';
 
+// 모듈 게임 시작 함수를 window에 노출
+window.moduleStartGame = function(difficulty) {
+  console.log('모듈 게임 시작!', difficulty);
+  
+  // 캔버스 초기화
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  
+  if (!cv || !ctx) {
+    console.error('캔버스를 찾을 수 없습니다');
+    return;
+  }
+  
+  updateLoop.resultShown = false;
+  newGame(difficulty, cv, ctx);
+  requestAnimationFrame(updateLoop);
+}
+
 const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d');
+const ctx = cv ? cv.getContext('2d') : null;
 
 function showResult(){
   const s = computeScore();
@@ -22,7 +40,7 @@ function showResult(){
   ];
   for(const [k,v] of rows){ const tr=document.createElement('tr'); tr.innerHTML=`<td>${k}</td><td style="text-align:right">${v}</td>`; body.appendChild(tr); }
   document.getElementById('res-total').textContent = s.total;
-  document.getElementById('res-title').textContent = '다시는 날 잊지 마';
+  document.getElementById('res-title').textContent = '다시는 날 잊지 마⋯⋯.';
   document.getElementById('result').style.display = 'grid';
 }
 
@@ -58,14 +76,53 @@ document.getElementById('pad').addEventListener('click', e=>{
 let sx=0, sy=0; cv.addEventListener('touchstart', e=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; }, {passive:true});
 cv.addEventListener('touchend', e=>{ const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=t.clientY-sy; if(Math.hypot(dx,dy)<24) return; if(Math.abs(dx)>Math.abs(dy)) tryMove(Math.sign(dx),0, cv, ctx); else tryMove(0,Math.sign(dy), cv, ctx); });
 
-// buttons
-document.getElementById('btn-new').onclick = ()=>{
-  updateLoop.resultShown = false;
-  newGame(document.getElementById('difficulty').value, cv, ctx);
-};
-document.getElementById('btn-retry').onclick = ()=>{ document.getElementById('result').style.display='none'; updateLoop.resultShown = false; newGame(state.diffKey, cv, ctx); };
-document.getElementById('btn-continue').onclick = ()=>{ document.getElementById('result').style.display='none'; updateLoop.resultShown = false; newGame(state.diffKey, cv, ctx); };
+// startGame 함수는 위에서 이미 정의됨
 
-// init
-newGame('normal', cv, ctx);
-requestAnimationFrame(updateLoop);
+// 페이지 로드 시 이벤트 연결
+function setupEventListeners() {
+  console.log('이벤트 리스너 설정 시작');
+  
+  const startButton = document.getElementById('btn-start');
+  if (startButton) {
+    startButton.addEventListener('click', function() {
+      console.log('게임 시작 버튼 클릭됨');
+      window.startGame();
+    });
+    console.log('게임 시작 버튼 연결 완료');
+  } else {
+    console.error('게임 시작 버튼을 찾을 수 없습니다');
+  }
+  
+  // 새 게임 버튼은 HTML에서 처리됨
+  
+  const retryButton = document.getElementById('btn-retry');
+  if (retryButton) {
+    retryButton.onclick = () => { 
+      document.getElementById('result').style.display='none'; 
+      updateLoop.resultShown = false; 
+      newGame(state.diffKey, cv, ctx); 
+    };
+  }
+  
+  const continueButton = document.getElementById('btn-continue');
+  if (continueButton) {
+    continueButton.onclick = () => { 
+      document.getElementById('result').style.display='none'; 
+      updateLoop.resultShown = false; 
+      newGame(state.diffKey, cv, ctx); 
+    };
+  }
+}
+
+// 여러 방법으로 이벤트 연결 시도
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupEventListeners);
+} else {
+  setupEventListeners();
+}
+
+setTimeout(setupEventListeners, 50);
+setTimeout(setupEventListeners, 200);
+setTimeout(setupEventListeners, 500);
+
+// init - 게임 자동 시작하지 않음 (배너가 먼저 보임)
